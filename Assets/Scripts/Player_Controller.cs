@@ -25,12 +25,12 @@ public class Player_Controller : MonoBehaviour
     private float ver_Velocity;
     private float _turnVelocity;
     private bool _isGroundedPrev;
-    public void OnMove(InputAction.CallbackContext context)
+    public void OnMove(InputAction.CallbackContext context)　//移動アクション
     {
        input_Move = context.ReadValue<Vector2>();
     }
 
-    public void OnJump(InputAction.CallbackContext context)
+    public void OnJump(InputAction.CallbackContext context) //ジャンプアクション
     {
         if (!context.performed || !C_Controller.isGrounded) return;
         ver_Velocity = _JumpSp;
@@ -52,15 +52,12 @@ public class Player_Controller : MonoBehaviour
         var isGrounded = C_Controller.isGrounded;
         if (isGrounded && !_isGroundedPrev)
         {
-            // 着地する瞬間に落下の初速を指定しておく
             ver_Velocity = -_initFallSpeed;
         }
         else if (!isGrounded)
         {
-            // 空中にいるときは、下向きに重力加速度を与えて落下させる
             ver_Velocity -= _gravity * Time.deltaTime;
 
-            // 落下する速さ以上にならないように補正
             if (ver_Velocity < -_fallSpeed)
                 ver_Velocity = -_fallSpeed;
         }
@@ -77,6 +74,20 @@ public class Player_Controller : MonoBehaviour
                 );
 
             _Tf.rotation = Quaternion.Euler(0,angleY,0);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Goal"))//ゴール接触判定
+        {
+            Debug.Log("a");
+            return;
+        }
+        else if(collision.gameObject.CompareTag("Obstacles")) //障害物接触判定
+        {
+            Debug.Log("あ");
+            Destroy(this.gameObject);
         }
     }
 }
